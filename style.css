@@ -1,0 +1,188 @@
+:root {
+    --primary-color: #9b59b6;
+    --secondary-color: #3498db;
+    --dark-color: #111;
+    --light-color: #f4f4f4;
+    --glow-shadow: 0 0 5px var(--primary-color), 0 0 15px var(--primary-color), 0 0 30px var(--primary-color);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+    overflow: hidden; /* Important pour l'effet canvas */
+}
+
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    animation: fadeIn 2s ease-in-out;
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    animation: slideInFromTop 1.5s forwards;
+}
+
+header p {
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: slideInFromBottom 1.5s 0.5s forwards;
+}
+
+.controls {
+    margin-top: 50px;
+}
+
+#twitch-login-btn {
+    background: #9146FF;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#twitch-login-btn .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+#twitch-login-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(145, 70, 255, 0.4);
+}
+
+.hidden {
+    display: none !important;
+}
+
+#action-buttons {
+    display: flex;
+    gap: 30px;
+}
+
+.action-btn {
+    position: relative;
+    padding: 20px 40px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--light-color);
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    border-radius: 50px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 80%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.7s, height 0.7s, opacity 0.7s;
+    z-index: -1;
+    opacity: 0.5;
+}
+
+.action-btn:hover::before {
+    width: 300px;
+    height: 300px;
+    opacity: 1;
+}
+
+.action-btn:hover {
+    color: white;
+    border-color: var(--light-color);
+    box-shadow: var(--glow-shadow);
+    transform: scale(1.05);
+}
+
+#remod-btn {
+    border-color: var(--secondary-color);
+}
+
+#remod-btn:hover {
+    box-shadow: 0 0 5px var(--secondary-color), 0 0 15px var(--secondary-color), 0 0 30px var(--secondary-color);
+}
+
+#remod-btn::before {
+    background: radial-gradient(circle, var(--secondary-color) 0%, transparent 80%);
+}
+
+.btn-text {
+    transition: transform 0.4s ease;
+}
+
+.btn-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 200%);
+    transition: transform 0.4s ease;
+    width: 24px;
+    height: 24px;
+}
+
+.btn-icon svg {
+    fill: currentColor;
+}
+
+.action-btn:hover .btn-text {
+    transform: translateY(-200%);
+}
+
+.action-btn:hover .btn-icon {
+    transform: translate(-50%, -50%);
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInFromTop {
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

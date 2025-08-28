@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface de Modération Avancée</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="container">
+        <header>
+            <h1>Tableau de Contrôle</h1>
+            <p>Actions rapides pour la chaîne</p>
+        </header>
+
+        <main class="controls">
+            <!-- Le bouton pour se connecter à Twitch -->
+            <button id="twitch-login-btn">
+                <!-- Icône SVG pour Twitch -->
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0h1.714v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0H6zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714v9.429z"/>
+                </svg>
+                <span>Connexion avec Twitch</span>
+            </button>
+
+            <!-- Les boutons d'action, cachés par défaut -->
+            <div id="action-buttons" class="hidden">
+                <button id="ban-btn" class="action-btn">
+                    <span class="btn-text">BAN</span>
+                    <span class="btn-icon">
+                        <!-- Icône SVG "interdit" -->
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </span>
+                </button>
+
+                <button id="remod-btn" class="action-btn">
+                    <span class="btn-text">REMOD + EDITOR</span>
+                    <span class="btn-icon">
+                        <!-- Icône SVG "étoile" -->
+                        <svg viewBox="0 0 24 24">
+                           <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
