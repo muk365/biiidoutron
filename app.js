@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // **IMPORTANT** : Remplacez par vos propres informations
     const CLIENT_ID = 'kqrhb79zczyxoh0uzlouwka4e2xbw7'; 
-    const REDIRECT_URI = 'http://localhost:5500/index.html'; // Doit correspondre à l'URI de redirection dans votre application Twitch
+    const REDIRECT_URI = 'https://biiidoutron.netlify.app/index.html'; // Doit correspondre à l'URI de redirection dans votre application Twitch
     const YOUR_CHANNEL_NAME = 'tmzypher'; // Le nom de la chaîne où les actions auront lieu
     const TARGET_USER_NAME = 'chbiiidou'; // L'utilisateur à bannir/moder
 
