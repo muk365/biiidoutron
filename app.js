@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // **IMPORTANT** : Remplacez par vos propres informations
     const CLIENT_ID = 'kqrhb79zczyxoh0uzlouwka4e2xbw7'; 
-    const REDIRECT_URI = 'https://biiidoutron.netlify.app/index.html'; // Doit correspondre à l'URI de redirection dans votre application Twitch
+    const REDIRECT_URI = 'https://biiidoutron.netlify.app/index.html'; // Mettez votre URL Netlify ici !
     const YOUR_CHANNEL_NAME = 'tmzypher'; // Le nom de la chaîne où les actions auront lieu
     const TARGET_USER_NAME = 'chbiiidou'; // L'utilisateur à bannir/moder
 
@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let broadcasterId = null;
     let targetUserId = null;
     
-    // Au chargement de la page, on vérifie si un token est dans l'URL
     const params = new URLSearchParams(window.location.hash.substring(1));
     accessToken = params.get('access_token');
 
@@ -81,23 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Connecté avec succès !');
         twitchLoginBtn.classList.add('hidden');
         actionButtons.classList.remove('hidden');
-        // On récupère les informations nécessaires (ID de la chaîne et de l'utilisateur cible)
         initializeApp();
     }
 
     twitchLoginBtn.addEventListener('click', () => {
-        // Scopes nécessaires pour les actions
-        const scopes = 'channel:manage:moderators moderation:manage';
+        // Scopes corrigés et nécessaires pour les actions
+        const scopes = 'channel:manage:moderators moderator:manage:banned_users';
         const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}`;
         window.location.href = authUrl;
     });
 
     async function getUserData(username) {
         const response = await fetch(`https://api.twitch.tv/helix/users?login=${username}`, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Client-ID': CLIENT_ID
-            }
+            headers: { 'Authorization': `Bearer ${accessToken}`, 'Client-ID': CLIENT_ID }
         });
         const data = await response.json();
         return data.data[0];
@@ -119,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
     banBtn.addEventListener('click', async () => {
         if (!broadcasterId || !targetUserId) return alert("Données non initialisées.");
         
-        const reason = "Timeout de 5 minutes via l'interface custom.";
         try {
             const response = await fetch(`https://api.twitch.tv/helix/moderation/bans?broadcaster_id=${broadcasterId}&moderator_id=${broadcasterId}`, {
                 method: 'POST',
@@ -129,11 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    data: {
-                        user_id: targetUserId,
-                        duration: 300, // 300 secondes = 5 minutes
-                        reason: reason
-                    }
+                    data: { user_id: targetUserId, duration: 300, reason: "Timeout de 5 minutes." }
                 })
             });
             if (response.ok) {
@@ -147,11 +137,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ### LOGIQUE DU BOUTON 2 ENTIÈREMENT RÉÉCRITE ###
     remodBtn.addEventListener('click', async () => {
         if (!broadcasterId || !targetUserId) return alert("Données non initialisées.");
 
         try {
-            // Ajout en tant que modérateur
+            // --- Étape 1: Unban de l'utilisateur ---
+            const unbanResponse = await fetch(`https://api.twitch.tv/helix/moderation/bans?broadcaster_id=${broadcasterId}&moderator_id=${broadcasterId}&user_id=${targetUserId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Client-ID': CLIENT_ID
+                }
+            });
+
+            if (unbanResponse.status === 204) {
+                console.log(`${TARGET_USER_NAME} a été débanni.`);
+            } else {
+                console.warn(`Avertissement lors du débannissement (code: ${unbanResponse.status}). Ce n'est peut-être pas une erreur si l'utilisateur n'était pas banni.`);
+            }
+
+            // --- Étape 2: Ajout en tant que modérateur ---
             const modResponse = await fetch(`https://api.twitch.tv/helix/moderation/moderators?broadcaster_id=${broadcasterId}&user_id=${targetUserId}`, {
                 method: 'POST',
                 headers: {
@@ -161,19 +167,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (modResponse.status === 204) {
-                 alert(`${TARGET_USER_NAME} a bien été ajouté comme modérateur !`);
+                 alert(`${TARGET_USER_NAME} a été débanni (si nécessaire) et promu modérateur !`);
             } else {
                  const error = await modResponse.json();
-                 alert(`Erreur lors de l'ajout du modérateur: ${error.message}`);
+                 alert(`L'utilisateur a été débanni, mais une erreur est survenue lors de l'ajout en modérateur: ${error.message}`);
             }
-            
-            // L'API Twitch ne permet pas d'ajouter un éditeur via un endpoint direct comme pour les modérateurs.
-            // Cette action doit être effectuée manuellement depuis le tableau de bord du créateur.
-            // On peut toutefois notifier l'utilisateur de cette limitation.
-            alert("Note : Le rôle d'éditeur doit être ajouté manuellement depuis votre tableau de bord créateur Twitch.");
 
         } catch (error) {
-            console.error('Erreur:', error);
+            console.error('Erreur globale lors de l\'action Unban + Remod:', error);
+            alert("Une erreur inattendue est survenue. Vérifiez la console pour plus de détails.");
         }
     });
 });
